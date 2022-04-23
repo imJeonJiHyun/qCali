@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="MemberDao">
+
+	<!-- <resultMap type="com.group.exam.member.command.LoginCommand"
+		id="memberLoginCommand">
+		<result property="mSeq" column="MEMBER_SEQ" />
+		<result property="mId" column="MEMBER_ID" />
+		<result property="mPassword" column="MEMBER_PASSWORD" />
+		<result property="mBpw" column="MEMBER_BPW" />
+		<result property="mNickname" column="MEMBER_NICKNAME" />
+		<result property="mBirthday" column="MEMBER_BIRTH_DAY" />
+		<result property="mRegday" column="MEMBER_REG_DAY" />
+		<result property="mAuth" column="MEMBER_AUTH" />
+		<result property="mLevel" column="MEMBER_LEVEL" />
+
+	</resultMap>
+ -->
+
+	<!-- 로그인 관련 -->
+	<select id="login" parameterType="String"
+		resultType="com.group.exam.member.command.LoginCommand">
+		select MEMBER_SEQ, MEMBER_ID, MEMBER_PASSWORD, MEMBER_BPW
+		, MEMBER_NICKNAME, to_char(MEMBER_BIRTH_DAY, 'yyyy.mm.dd') MEMBER_BIRTH_DAY, to_char(MEMBER_REG_DAY, 'yyyy.mm.dd') MEMBER_REG_DAY, MEMBER_AUTH,
+		MEMBER_LEVEL from MEMBER where MEMBER_ID = #{memberId}
+	</select>
+
+
+	<!-- 비밀번호 찾기 관련 -->
+	<select id="findPwd" parameterType="String"
+		resultType="com.group.exam.member.command.LoginCommand">
+		select * from MEMBER where MEMBER_ID = #{memberId}
+	</select>
+
+	<update id="updateTmpPwd" parameterType="HashMap">
+		update MEMBER set
+		MEMBER_PASSWORD = #{tmpPwd} where MEMBER_ID = #{memberId}
+	</update>
+
+
+	<!-- 회원가입 관련 -->
+
+	<insert id="memberInsert" parameterType="memberVo">
+		INSERT INTO member
+		(member_seq, member_id, member_password, member_bpw, member_nickname,
+		member_birth_day, member_reg_day)
+		VALUES
+		(m_seq.nextval, #{memberId},
+		#{memberPassword}, #{memberPassword}, #{memberNickname}, #{memberBirthDay}, SYSDATE)
+	</insert>
+
+	<select id="idDup" parameterType="String" resultType="Integer">
+		SELECT
+		COUNT(*) FROM member WHERE member_id = #{memberId}
+	</select>
+
+	<select id="nicknameDup" parameterType="String" resultType="Integer">
+		SELECT COUNT(*) FROM member WHERE member_nickname = #{memberNickname}
+	</select>
+
+	<update id="updateAuthkey" parameterType="memberVo">
+		UPDATE
+		member SET member_authkey = #{memberAuthkey} WHERE member_id = #{memberId}
+	</update>
+
+	<update id="updateAuth" parameterType="memberVo">
+		UPDATE member
+		SET member_auth = #{memberAuth} WHERE member_authkey = #{memberAuthkey}
+	</update>
+
+	<!-- 회원 정보 변경 관련 -->
+	<update id="updateMemberPwd" parameterType="HashMap">
+		UPDATE
+		member SET MEMBER_PASSWORD = #{memberPassword}, MEMBER_BPW = #{memberPassword}
+		WHERE member_seq = #{memberSeq}
+	</update>
+
+	<update id="updateMemberNickname" parameterType="HashMap">
+		UPDATE member SET MEMBER_NICKNAME = #{memberNickname} WHERE member_seq =
+		#{memberSeq}
+	</update>
+
+	<delete id="deleteMember" parameterType="Integer">
+		DELETE MEMBER WHERE
+		MEMBER_SEQ = #{memberSeq}
+	</delete>
+
+	<!-- 회원 질문 등록 -->
+	<insert id="memberQuestionAdd"
+		parameterType="HashMap">
+		INSERT INTO QUESTION(QUESTION_SEQ, QUESTION_CONTENT, MEMBER_SEQ)
+		VALUES (Q_SEQ.nextval, #{questionContent}, #{memberSeq})
+	</insert>
+	
+		<!-- 멤버 AUTH 상태 확인 -->
+	<select id="memberAuth" parameterType="Integer"
+		resultType="String">
+		select MEMBER_AUTH from MEMBER where MEMBER_SEQ = #{memberSeq}
+
+	</select>
+
+</mapper>
