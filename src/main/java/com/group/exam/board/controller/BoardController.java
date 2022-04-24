@@ -11,6 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.servlet.ServletException;
@@ -348,6 +349,21 @@ public class BoardController {
 		model.addAttribute("replyList", replyList);
 		
 		return replyList;
+	}
+	
+	@PostMapping(value = "/replyUpdate", produces = "application/json")
+	@RequestMapping
+	public Map<String, Object> boardReplyUpdate(@RequestBody ReplyVo replyVo) {
+		Map<String, Object> result = new HashMap<>();
+
+		try {
+			boardService.replyUpdate(replyVo);
+			result.put("status", "OK");
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("status", "False");
+		}
+		return result;
 	}
 
 	// 게시글 수정

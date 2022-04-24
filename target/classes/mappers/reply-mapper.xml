@@ -4,7 +4,7 @@
 
 <mapper namespace="BoardDao">
 	<select id="replySelect" parameterType="Integer" resultType="replyVo">
-		select member_nickname, reply_content, to_char(reply_reg_day, 'yyyy.mm.dd') reply_reg_day from reply A, member B where A.member_seq = B.member_seq and BOARD_SEQ = #{boardSeq}
+		select member_nickname, reply_content, to_char(reply_reg_day, 'yyyy.mm.dd') reply_reg_day, reply_seq from reply A, member B where A.member_seq = B.member_seq and BOARD_SEQ = #{boardSeq}
 	</select>
 	
 	<select id="replyCount" resultType="Integer">

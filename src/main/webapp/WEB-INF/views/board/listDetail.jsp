@@ -76,7 +76,7 @@
 				<td>
 				
 					<td>
-					<c:if test="${empty boarList.memberNickname }">
+					<c:if test="${empty boarList.memberNickname}">
 						탈퇴 회원
 					</c:if>
 			
@@ -98,8 +98,8 @@
 
 			<c:if test="${myArticle == true}">
 
-				<a href="<c:url value='/board/edit?boardSeq=${boardList.boardSeq}'/>"><button>글
-						수정</button></a>
+				<a href="<c:url value='/board/edit?boardSeq=${boardList.boardSeq}'/>">
+				<button>글수정</button></a>
 
 
 				<a href="<c:url value='/board/delete?boardSeq=${boardList.boardSeq}'/>"><button
@@ -123,6 +123,7 @@
     	
     	<!-- 댓글 리스트 폼 -->
 		<div id="replyList"></div>
+
 		
 		
 	<script src="https://code.jquery.com/jquery-3.6.0.js"></script>
@@ -227,6 +228,26 @@
 		           			 htmls += "<td><button type=\"button\" class=\"replyDelete\" data-replySeq=\"${replyList.replySeq}\">삭제</button></td>";
 		            		 htmls += "</tr>";
 		            		 htmls += "</c:forEach>";
+		            		 
+		            		 //아래 코드 작동 되는지 확인하기
+		            		 
+		                     htmls += '<div class="media text-muted pt-3" id="replySeq' + this.${replyList.replySeq} + '">';
+		                     htmls += '<svg class="bd-placeholder-img mr-2 rounded" width="32" height="32" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false" role="img" aria-label="Placeholder:32x32">';
+		                     htmls += '<title>Placeholder</title>';
+		                     htmls += '<rect width="100%" height="100%" fill="#007bff"></rect>';
+		                     htmls += '<text x="50%" fill="#007bff" dy=".3em">32x32</text>';
+		                     htmls += '</svg>';
+		                     htmls += '<p class="media-body pb-3 mb-0 small lh-125 border-bottom horder-gray">';
+		                     htmls += '<span class="d-block">';
+		                     htmls += '<strong class="text-gray-dark">' + this.${replyList.memberNickname} + '</strong>';
+		                     htmls += '<span style="padding-left: 7px; font-size: 9pt">';
+		                     htmls += '<a href="javascript:void(0)" onclick="fn_editReply(' + this.${replyList.replySeq} + ', \'' + this.${replyList.memberNickname} + '\', \'' + this.${replyList.replyContent} + '\' )" style="padding-right:5px">수정</a>';
+		                     htmls += '<a href="javascript:void(0)" onclick="fn_deleteReply(' + this.${replyList.replySeq} + ')" >삭제</a>';
+		                     htmls += '</span>';
+		                     htmls += '</span>';
+		                     htmls += this.${replyList.replyContent};
+		                     htmls += '</p>';
+		                     htmls += '</div>';
 		                	 });	//each end
 		                htmls += '</table>';
 						$("#replyList").html(htmls);
@@ -234,6 +255,76 @@
 	            }// Ajax success end
 			});	// Ajax end
 		}
+		
+		
+		//댓글 수정 폼 불러오기 함수
+		function fn_editReply(replySeq, memberNickname, replyContent){ //변수명 어떻게 해야하는지 확인하기
+
+			var htmls = "";
+			htmls += '<div class="media text-muted pt-3" id="replySeq' + ${replySeq} + '">';
+			htmls += '<svg class="bd-placeholder-img mr-2 rounded" width="32" height="32" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false" role="img" aria-label="Placeholder:32x32">';
+			htmls += '<title>Placeholder</title>';
+			htmls += '<rect width="100%" height="100%" fill="#007bff"></rect>';
+			htmls += '<text x="50%" fill="#007bff" dy=".3em">32x32</text>';
+			htmls += '</svg>';
+			htmls += '<p class="media-body pb-3 mb-0 small lh-125 border-bottom horder-gray">';
+			htmls += '<span class="d-block">';
+			htmls += '<strong class="text-gray-dark">' + ${memberNickname} + '</strong>';
+			htmls += '<span style="padding-left: 7px; font-size: 9pt">';
+			htmls += '<a href="javascript:void(0)" onclick="fn_updateReply(' + ${replySeq} + ', \'' + ${memberNickname} + '\')" style="padding-right:5px">저장</a>';
+			htmls += '<a href="javascript:void(0)" onClick="showReplyList()">취소<a>';
+			htmls += '</span>';
+			htmls += '</span>';		
+			htmls += '<textarea name="replyContent" id="replyContent" class="form-control" rows="3">';
+			htmls += ${replyContent};
+			htmls += '</textarea>';
+			htmls += '</p>';
+			htmls += '</div>';
+			$('#replySeq' + replySeq).replaceWith(htmls);
+			$('#replySeq' + replySeq + ' #editContent').focus();
+		}
+		
+		
+		//댓글 수정 저장 함수
+		function fn_updateReply(rid, reg_id){
+			
+			var replyEditContent = $('#editContent').val();
+			var paramData = JSON.stringify({"content": replyEditContent, "rid": rid});
+			var headers = {"Content-Type" : "application/json", "X-HTTP-Method-Override" : "POST"};
+			$.ajax({
+				url: "${updateReplyURL}"
+				, headers : headers
+				, data : paramData
+				, type : 'POST'
+				, dataType : 'text'
+				, success: function(result){
+                	console.log(result);
+					showReplyList();
+				}
+				, error: function(error){
+					console.log("에러 : " + error);
+				}
+			});
+		}
+		
+		
+		//댓글 삭제 함수
+		function fn_deleteReply(rid){
+			var paramData = {"rid": rid};
+			$.ajax({
+				url: "${deleteReplyURL}"
+				, data : paramData
+				, type : 'POST'
+				, dataType : 'text'
+				, success: function(result){
+					showReplyList();
+				}
+				, error: function(error){
+					console.log("에러 : " + error);
+				}
+			});
+		}
+		
 	</script>
 
 	<script type="text/javascript">
