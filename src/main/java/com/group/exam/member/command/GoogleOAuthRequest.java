@@ -18,6 +18,7 @@ public class GoogleOAuthRequest {
 	private String includeGrantedScopes;
 	private String loginHint;
 	private String prompt;
+	
 	public String getRedirectUri() {
 		return redirectUri;
 	}
@@ -90,7 +91,7 @@ public class GoogleOAuthRequest {
 	public void setPrompt(String prompt) {
 		this.prompt = prompt;
 	}
-	public static Object builder() {
+	public static String builder() {
 		// TODO Auto-generated method stub
 		return null;
 	}

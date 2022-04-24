@@ -107,14 +107,24 @@
 
 
 			</c:if>
-
-
-
-
 		</c:if>
-
-
 	</table>
+	
+		<!-- 댓글 입력 폼 -->
+    <table style="padding-top: 100px">
+    	 <tr>
+    	 <c:if test="${!empty my}">
+       		<td >댓글 쓰기</td>
+       		<td><textarea name="replyContent" id="replyContent" cols="20" rows="3"></textarea></td>
+       		<td><button type="button" class="btn btn-sm btn-primary" id="btnReplySave">댓글 등록</button></td>
+       	</c:if>    
+       </tr>
+    </table>
+    	
+    	<!-- 댓글 리스트 폼 -->
+		<div id="replyList"></div>
+		
+		
 	<script src="https://code.jquery.com/jquery-3.6.0.js"></script>
 	<script>
 		$(document).ready(function() {
@@ -152,22 +162,87 @@
 				});
 			});
 		});
+		
+		
+		//댓글 저장 함수
+		$(document).on('click', '#btnReplySave', function(){
+			
+			var replyContent = $('#replyContent').val();
+			
+			var paramData = JSON.stringify
+			({"replyContent": replyContent, "boardSeq":'${boardList.boardSeq}'});
+			
+			var headers = {"Content-Type" : "application/json", "X-HTTP-Method-Override" : "POST"};
+			
+			$.ajax({
+				url: '<c:url value="/board/reply"/>'
+				, headers : headers
+				, data : paramData
+				, type : 'POST'
+				, contentType : 'application/json'
+				, success: function(result){
+					
+					console.log("댓글이 입력됐습니다.");
+				}
+				, error: function(error){
+					console.log("에러 : " + error);
+				}// Ajax success end
+			}); // Ajax end
+		});
+		
+		
+		//댓글 리스트 함수
+		$(document).ready(function(){
+			showReplyList();
+		});
+		
+		function showReplyList(){
+			var paramData = {"boardSeq":'${boardList.boardSeq}'};
+			var headers = {"Content-Type" : "application/json", "X-HTTP-Method-Override" : "POST"};
+			$.ajax({
+	            type: 'POST',
+	            url : '<c:url value="/board/reply"/>',
+	            data: JSON.stringify(paramData),
+	            contentType : 'application/json; charset=utf-8',
+	            success: function(result) {
+	               	var htmls = "";
+				if(result.length < 1){
+					htmls.push("등록된 댓글이 없습니다.");
+				} else {	
+	                 	htmls += '<table border = "1">';					
+		                     $(result).each(function(){	 
+			                 htmls += '<tr>';
+			        	     htmls += '<th>작성자</th>';
+			        	     htmls += '<th>내용</th>';
+			        	     htmls += '<th>작성 날짜</th>';
+			        	     htmls += '<th>수정</th>';
+			        	  	 htmls += '<th>삭제</th>';
+			        		 htmls += '</tr>';		                    	 
+		                     htmls += "<c:forEach var ="replyList" items="${replyList}">";
+		                     htmls += "<tr>";
+		              		 htmls += "<td>"+${replyList.memberNickname}+"</td>";
+		                     htmls += "<td>"+${replyList.replyContent}+"</td>";
+		               		 htmls += "<td>"+${replyList.replyRegDay}+"</td>";             	
+		               		 htmls += "<td><button type=\"button\" id=\"replyUpdateBtn\" data-replySeq=\"${replyList.replySeq}\">수정</button></td>";
+		           			 htmls += "<td><button type=\"button\" class=\"replyDelete\" data-replySeq=\"${replyList.replySeq}\">삭제</button></td>";
+		            		 htmls += "</tr>";
+		            		 htmls += "</c:forEach>";
+		                	 });	//each end
+		                htmls += '</table>';
+						$("#replyList").html(htmls);
+	            		} //else end
+	            }// Ajax success end
+			});	// Ajax end
+		}
 	</script>
 
 	<script type="text/javascript">
 		function button_event() {
-
 			if (confirm("정말 삭제하시겠습니까??") == true) { //확인
-
 				document.form.submit();
-
 			} else { //취소
-
 				return;
-
 			}
-
 		}
 	</script>
-
 </body>

@@ -16,6 +16,9 @@
 		<typeAlias type="com.group.exam.board.vo.BoardVo"
 			alias="boardVo" />
 			
+		<typeAlias type="com.group.exam.board.vo.ReplyVo"
+			alias="replyVo" />
+			
 		<typeAlias alias="memberVo"
 			type="com.group.exam.member.vo.MemberVo" />
 

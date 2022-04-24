@@ -11,6 +11,7 @@ import com.group.exam.board.command.QuestionAdayCommand;
 import com.group.exam.board.dao.BoardDao;
 import com.group.exam.board.vo.BoardHeartVo;
 import com.group.exam.board.vo.BoardVo;
+import com.group.exam.board.vo.ReplyVo;
 import com.group.exam.utils.Criteria;
 @Service
 public class BoardServiceImpl implements BoardService{
@@ -183,11 +184,37 @@ public class BoardServiceImpl implements BoardService{
 		return boardDao.boardSearch(map);
 	}
 
-	
 
-	
-	
-	
-	
+	//댓글 기능 관련
+	@Override
+	public List<ReplyVo> replyList(int boardSeq) {
+		return boardDao.replyList(boardSeq);
+	}
 
+
+	@Override
+	public void replyInsert(ReplyVo replyVo) {
+		ReplyVo insertReply = new ReplyVo();
+		insertReply.setBoardReplySeq(replyVo.getBoardReplySeq());
+		insertReply.setMemberReplySeq(replyVo.getMemberReplySeq());
+		insertReply.setReplyContent(replyVo.getReplyContent());
+		
+		boardDao.replyInsert(insertReply);
+	}
+
+
+	@Override
+	public void replyUpdate(ReplyVo replyVo) {
+		ReplyVo updateReply = new ReplyVo();
+		updateReply.setReplySeq(replyVo.getReplySeq());
+		updateReply.setReplyContent(replyVo.getReplyContent());
+
+		boardDao.replyUpdate(updateReply);
+	}
+
+
+	@Override
+	public void replyDelete(int replySeq) {
+		boardDao.replyDelete(replySeq);		
+	}
 }

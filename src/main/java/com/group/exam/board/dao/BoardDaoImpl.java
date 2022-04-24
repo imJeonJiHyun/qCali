@@ -11,6 +11,7 @@ import com.group.exam.board.command.BoardlistCommand;
 import com.group.exam.board.command.QuestionAdayCommand;
 import com.group.exam.board.vo.BoardHeartVo;
 import com.group.exam.board.vo.BoardVo;
+import com.group.exam.board.vo.ReplyVo;
 import com.group.exam.utils.Criteria;
 @Repository
 public class BoardDaoImpl implements BoardDao{
@@ -165,6 +166,42 @@ public class BoardDaoImpl implements BoardDao{
 		
 		System.out.println("dao\n" + map.toString());
 		return sqlSessionTemplate.selectList("boardSearch", map);
+	}
+
+
+	//댓글 관련
+	@Override
+	public List<ReplyVo> replyList(int boardSeq) {
+		return sqlSessionTemplate.selectList("replySelect", boardSeq);
+		// 게시글에 맞춰서 댓글 리스트 띄우기
+	}
+
+
+	@Override
+	public int replyCount() {
+		return sqlSessionTemplate.selectOne("replyCount");
+		//댓글 갯수 카운트
+	}
+
+
+	@Override
+	public void replyInsert(ReplyVo replyVo) {
+		sqlSessionTemplate.insert("replyInsert", replyVo);	
+		//댓글 쓰기
+	}
+
+
+	@Override
+	public void replyUpdate(ReplyVo replyVo) {
+		sqlSessionTemplate.update("replyUpdate", replyVo);
+		//댓글 수정
+	}
+
+
+	@Override
+	public void replyDelete(int replySeq) {
+		sqlSessionTemplate.delete("replyDelete", replySeq);
+		//댓글 삭제
 	}
 
 }

@@ -42,12 +42,15 @@ import com.group.exam.board.command.BoardLikeCommand;
 import com.group.exam.board.command.BoardlistCommand;
 import com.group.exam.board.command.BoardupdateCommand;
 import com.group.exam.board.command.QuestionAdayCommand;
+import com.group.exam.board.command.BoardreplyInsertCommand;
 import com.group.exam.board.service.BoardService;
 import com.group.exam.board.vo.BoardHeartVo;
 import com.group.exam.board.vo.BoardVo;
+import com.group.exam.board.vo.ReplyVo;
 import com.group.exam.member.command.LoginCommand;
 import com.group.exam.member.service.MemberService;
 import com.group.exam.utils.PaginVo;
+
 import com.group.exam.utils.Criteria;
 
 @Controller
@@ -321,7 +324,30 @@ public class BoardController {
 		// String result = Integer.toString(heart);
 
 		return command.getHeart();
-
+	}
+	
+	
+	//댓글 list & insert
+	@PostMapping(value = "/reply", produces = "application/json")
+	@ResponseBody	
+	public List<ReplyVo> boardReply(@RequestBody BoardreplyInsertCommand command, HttpSession session, Model model) {
+		LoginCommand loginMember = (LoginCommand) session.getAttribute("memberLogin");	
+		
+		//댓글 입력 값이 있을 때 (클릭 시) insert
+		if (command.getReplyContent() != null) {
+			ReplyVo insertReply = new ReplyVo();
+			insertReply.setBoardReplySeq(command.getBoardReplySeq());
+			insertReply.setMemberReplySeq(loginMember.getMemberSeq());
+			insertReply.setReplyContent(command.getReplyContent());	
+			
+			boardService.replyInsert(insertReply);
+		}
+		
+		//댓글 list
+		List<ReplyVo> replyList = boardService.replyList(command.getBoardReplySeq());
+		model.addAttribute("replyList", replyList);
+		
+		return replyList;
 	}
 
 	// 게시글 수정
