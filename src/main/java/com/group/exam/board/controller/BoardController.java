@@ -1,8 +1,6 @@
 package com.group.exam.board.controller;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -14,8 +12,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -34,10 +30,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.group.exam.board.command.BoardLikeCommand;
 import com.group.exam.board.command.BoardlistCommand;
@@ -62,15 +56,12 @@ public class BoardController {
 	public static int num;
 
 	private BoardService boardService;
-
 	private MemberService memberService;
 
 	@Autowired
 	public BoardController(BoardService boardService, MemberService memberService) {
 		this.boardService = boardService;
-
 		this.memberService = memberService;
-
 	}
 
 	@GetMapping(value = "/write")
@@ -298,7 +289,25 @@ public class BoardController {
 		int boardlike = boardService.getBoardLike(likeVo);
 
 		model.addAttribute("boardHeart", boardlike);
-
+		
+		//댓글 list
+		List<ReplyVo> replyList = boardService.replyList(boardSeq);
+		model.addAttribute("replyList", replyList);
+		
+		boolean replyMemberCheck = false;
+		
+		if (loginMember != null) {
+			// 세션에서 멤버의 mSeq 를 ReplyVo에 셋팅
+			int memberSeq = loginMember.getMemberSeq();
+			BoardreplyInsertCommand replycommand = new BoardreplyInsertCommand();
+			replycommand.setMemberReplySeq(loginMember.getMemberSeq());
+			// 세션에 저장된 mSeq와 댓글의 mSeq를 비교하여 내 글이면 수정 삭제 버튼이 뜨게
+			//어케해요잉
+			if (memberSeq == replycommand.getMemberReplySeq()) {
+				replyMemberCheck = true;
+			}
+			model.addAttribute("replyMemberCheck", replyMemberCheck);
+		}
 		return "board/listDetail";
 	}
 
@@ -332,7 +341,7 @@ public class BoardController {
 	@PostMapping(value = "/reply", produces = "application/json")
 	@ResponseBody	
 	public List<ReplyVo> boardReply(@RequestBody BoardreplyInsertCommand command, HttpSession session, Model model) {
-		LoginCommand loginMember = (LoginCommand) session.getAttribute("memberLogin");	
+		LoginCommand loginMember = (LoginCommand) session.getAttribute("memberLogin");
 		
 		//댓글 입력 값이 있을 때 (클릭 시) insert
 		if (command.getReplyContent() != null) {
@@ -346,8 +355,21 @@ public class BoardController {
 		
 		//댓글 list
 		List<ReplyVo> replyList = boardService.replyList(command.getBoardReplySeq());
-		model.addAttribute("replyList", replyList);
 		
+		boolean replyMemberCheck = false;
+		
+		if (loginMember != null) {
+			// 세션에서 멤버의 mSeq 를 ReplyVo에 셋팅
+			int memberSeq = loginMember.getMemberSeq();
+			BoardreplyInsertCommand replycommand = new BoardreplyInsertCommand();
+			replycommand.setMemberReplySeq(loginMember.getMemberSeq());
+			// 세션에 저장된 mSeq와 댓글의 mSeq를 비교하여 내 글이면 수정 삭제 버튼이 뜨게
+			if (memberSeq == replycommand.getMemberReplySeq()) {
+				replyMemberCheck = true;
+			}
+			model.addAttribute("replyMemberCheck", replyMemberCheck);
+		}
+		model.addAttribute("replyList", replyList);
 		return replyList;
 	}
 	

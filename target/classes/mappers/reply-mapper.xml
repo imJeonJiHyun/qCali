@@ -3,12 +3,12 @@
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="BoardDao">
-	<select id="replySelect" parameterType="Integer" resultType="replyVo">
+	<select id="replyList" parameterType="Integer" resultType="replyVo">
 		select member_nickname, reply_content, to_char(reply_reg_day, 'yyyy.mm.dd') reply_reg_day, reply_seq from reply A, member B where A.member_seq = B.member_seq and BOARD_SEQ = #{boardSeq}
 	</select>
 	
-	<select id="replyCount" resultType="Integer">
-		select count(*) from "REPLY"
+	<select id="replyCount" parameterType="Integer" resultType="Integer">
+		select count(*) from "REPLY" where board_seq = #{boardSeq}
 	</select>
 	
 	<insert id="replyInsert" parameterType="replyVo">

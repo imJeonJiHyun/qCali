@@ -3,6 +3,7 @@ package com.group.exam.board.command;
 public class BoardreplyInsertCommand {
 	private int boardReplySeq;
 	private String replyContent;
+	private int memberReplySeq;
 	
 	public int getBoardReplySeq() {
 		return boardReplySeq;
@@ -15,5 +16,11 @@ public class BoardreplyInsertCommand {
 	}
 	public void setReplyContent(String replyContent) {
 		this.replyContent = replyContent;
+	}
+	public int getMemberReplySeq() {
+		return memberReplySeq;
+	}
+	public void setMemberReplySeq(int memberReplySeq) {
+		this.memberReplySeq = memberReplySeq;
 	}
 }

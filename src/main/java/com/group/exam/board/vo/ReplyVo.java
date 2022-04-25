@@ -1,12 +1,12 @@
 package com.group.exam.board.vo;
 
 public class ReplyVo {
-	private int replySeq;
-	private int boardReplySeq;
-	private int memberReplySeq;
-	private String replyContent;
-	private String memberNickname;
-	private String replyRegDay; //변수명을 p키들과 맞춰야하나?
+	private int replySeq; //댓글 번호
+	private int boardReplySeq; //게시물 번호
+	private int memberReplySeq; //댓글 작성자 번호
+	private String replyContent; //댓글 내용
+	private String memberNickname; //댓글 작성자
+	private String replyRegDay; //댓글 작성 날짜
 	
 	public int getReplySeq() {
 		return replySeq;

@@ -172,7 +172,7 @@ public class BoardDaoImpl implements BoardDao{
 	//댓글 관련
 	@Override
 	public List<ReplyVo> replyList(int boardSeq) {
-		return sqlSessionTemplate.selectList("replySelect", boardSeq);
+		return sqlSessionTemplate.selectList("replyList", boardSeq);
 		// 게시글에 맞춰서 댓글 리스트 띄우기
 	}
 
