@@ -82,9 +82,6 @@
 				</a>
 			</div>
 
-
-
-
 			<c:if test="${myArticle == true}">
 
 				<a href="<c:url value='/board/edit?boardSeq=${boardList.boardSeq}'/>">
@@ -93,43 +90,24 @@
 
 				<a href="<c:url value='/board/delete?boardSeq=${boardList.boardSeq}'/>"><button
 						onclick="button_event();">글 삭제</button></a>
-
-
 			</c:if>
 		</c:if>
-	</table>
+	</table>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 	
-		<!-- 댓글 입력 폼 -->
-    <table style="padding-top: 100px">
-    	 <tr>
-       		<td >댓글 쓰기</td>
-       		<td><textarea name="replyContent" id="replyContent" cols="20" rows="3"></textarea></td>
-       		<td><button type="button" class="btn btn-sm btn-primary" id="btnReplySave">댓글 등록</button></td>
-       </tr>
-    </table>
-    	
-    	<!-- 댓글 리스트 폼 -->
-    <table border=1>
-		<tr>
-			<th>작성자</th>
-			<th>내용</th>
-			<th>작성 날짜</th>
-			<th>수정</th>
-			<th>삭제</th>
-		</tr>		                    	 
-			<c:forEach var ="replyList" items="${replyList}">
-			<tr>
-				<td>${replyList.memberNickname}</td>
-				<td>${replyList.replyContent}</td>
-				<td>${replyList.replyRegDay}</td>   
-				<c:if test="${replyMemberCheck == true}">   
-				  
-				<td><button type="button" id="replyUpdateBtn" onclick="fn_updateReply(replySeq, memberNickname, replyContent)" style="padding-right:5px">수정</button></td>
-				<td><button type="button" class="replyDelete" data-replySeq="${replyList.replySeq}">삭제</button></td>
-				</c:if>
-			</tr>
-			</c:forEach>
-	</table>
+	<div class="col-md-6">
+		<label for="memberNickname" id="memberNickname" name="memberNickname">작성자 : ${memberLogin.memberNickname}</label><br/>
+		<label for="replyContent"> 댓글 : </label>
+		<textarea class="form-control" id="replyContent" name="replyContent"></textarea>
+		<button type="button" class="btn btn-outline-success" id="replywriteBtn">댓글 작성</button>
+	</div><br/><hr/>
+	
+	<div class="container"><!-- 댓글이 들어갈 div -->
+		<div id="replyList"></div>
+	</div>
+
+
+
+
 
 	<script src="https://code.jquery.com/jquery-3.6.0.js"></script>
 	<script>
@@ -177,71 +155,58 @@
 		
 		//댓글 리스트 함수
 		function getreplylist() {
-			var replyurl = = "<c:url value="/board/reply"/>";
-			var replyboardSeq = $('#boardSeq').val();
-			
+			var paramData = {'boardReplySeq' : '${boardList.boardSeq}'};
 			$.ajax({
-				url : replyurl+boardSeq,
+				url : '<c:url value="/board/reply"/>',
+				data : paramData,
 				type : 'POST',
 				contentType : 'application/json',
 				success: function(result){
 					var htmls = "";
 					if(result.length < 1) {
-						comments = "등록된 댓글이 없습니다.";
+						htmls = "등록된 댓글이 없습니다.";
 					} else {
 						$(result).each(function() {
-							htmls += '<br/>';
+							htmls += '<c:forEach var ="replyList" items="${replyList}">';
+							htmls += '<div id="replySeq'+${replyList.replySeq}+'">';
 							htmls += '<strong>';
-							htmls += '작성자 : ' + this.memberNickname;
+							htmls += '작성자 : ' + ${replyList.memberNickname};
 							htmls += '</strong>&nbsp;&nbsp;&nbsp;&nbsp;';
-							htmls += '작성 날짜 : ' + this.replyRegDay;
+							htmls += '작성 날짜 : ${replyList.replyRegDay}';
 							htmls += '<br/> <p>';
 							htmls += '댓글 내용 : &nbsp;&nbsp;&nbsp;';
-							htmls += this.replyContent;
+							htmls += ${replyList.replyContent};
 							htmls += '</p>';
 							htmls += '<br/>';
-							htmls += '<button type="button" class="btn btn-outline-success" id="replyupdateBtn"';
-							htmls += 'data-rno='+this.replySeq+'>';
-							htmls += '댓글수정';
-							htmls += '</button>';
+							htmls += '<button type="button" class="btn btn-outline-success" onclick="updateviewBtn(' + ${replyList.replySeq} +',\'' + '\', \'' + ${replyList.replyContent} + '\', \''+ ${replyList.memberNickname} + '\')">';
+							htmls += '댓글수정</button>';
+							htmls += '<button type="button" class="btn btn-outline-success" onclick="replydelete(' + ${replyList.replySeq} +')">';
+							htmls += '댓글삭제</button>';
+							htmls += '</div>';
+							htmls += '</c:forEach>';
 							htmls += '<br/>';
 						});
 					};
-						$("#replylist").html(htmls);
+						$("#replyList").html(htmls);
 				}
 			});
-		};
-			
-		//날짜 변환 함수
-		function getFormatDate(date) { //ajax에서는 data 형식을 읽을 수 없으므로 자바스크립트에서 data형식으로 바꿔줌
-			var year = date.getFullYear();
-			var month = (1 + date.getMonth());
-			month = month >= 10 ? month : '0' + month;
-			var day = date.getDate();
-			day = day >= 10 ? day : '0' + day;
-			return year + '-' + month + '-' + day;
-		}
+		};		
+		
 
 		//댓글 저장 함수
 		$(function() {
-			
 			$('#replywriteBtn').click(function() {
 				console.log("들어오냐");
-				
 				var replyContent = $('#replyContent').val();
-					memberNickname = $('#memberNickname').val();
-					boardReplySeq = ${boardList.boardSeq};
-					
-				var writeurl = "<c:url value="/board/reply"/>";
-				
+				var paramData = JSON.stringify({'replyContent' : replyContent, 'memberNickname' : '${memberLogin.memberNickname}', 'boardReplySeq' : '${boardList.boardSeq}'});
 				$.ajax({
-					url: writeurl+boardReplySeq+'/'+memberNickname+'/'+replyContent,
+					url : '<c:url value="/board/replyinsert"/>',
+					data : paramData,
 					type : 'POST',
 					contentType : 'application/json',
 					success: function(result){
 						getreplylist();
 						$('#replyContent').val('');
-						$('#memberNickname').val('');
 					},
 					error: function(error) {
 						console.log("에러 : " + JSON.stringify(error));
@@ -249,54 +214,6 @@
 				})
 			});
 		});
-		
-		
-		//댓글 수정 폼 불러오기 함수
-		function fn_editReply(replySeq, memberNickname, replyContent){//변수명 어떻게 해야하는지 확인하기
-			console.log("들어오나");
-		
-			var htmls = "";
-			
-			htmls += '<div id="replySeq'+replySeq+'">';
-			htmls += '<strong>';
-			htmls += '작성자 : ' + memberNickname;
-			htmls += '</strong>&nbsp;&nbsp;&nbsp;&nbsp;';
-			htmls += '<br/><p>';
-			htmls += '수정 할 댓글 내용 : &nbsp;&nbsp;&nbsp;';
-			htmls += '<textarea class="form-control" id="replyUpdateContent">';
-			htmls += replyContent;
-			htmls += '</textarea>';
-			htmls += '</p>';
-			htmls += '<br/>';
-		
-			htmls += '<button type="button" class="btn-outline-success"';
-			htmls += 'onclik="updateBtn(' + replySeq + ',\'' + memberNickname +'\')">댓글 작성</button>';
-			htmls += '<button type="button" class="btn-outline-success" onclick="getreplylist()" >';
-			htmls += '취소';
-			htmls += '</button>';
-			htmls += '</div>';
-			htmls += '<br/>';
-			$('#replySeq' + replySeq).replaceWith(htmls);
-			$('#replySeq' + replySeq + ' #replyContent').focus();
-		};
-		
-		//댓글 수정 함수
-		function updateBtn(replySeq, memberNickname) {
-			var updateurl = "<c:url value="/board/replyUpdate"/>";
-			var replyContent = $("#replyUpdateContent").val();
-			
-			$.ajax({
-				url : updateurl+replySeq+'/'+replyContent,
-				type : 'POST',
-				contentType : 'application/json',
-				success: function(result){
-					getreplylist();
-				},
-				error: function(error){
-					console.log("에러 : " + JSON.stringify(error));
-				}
-			});
-		};
 	</script>
 
 	<script type="text/javascript">

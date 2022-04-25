@@ -187,8 +187,8 @@ public class BoardServiceImpl implements BoardService{
 
 	//댓글 기능 관련
 	@Override
-	public List<ReplyVo> replyList(int boardSeq) {
-		return boardDao.replyList(boardSeq);
+	public List<ReplyVo> replyList(int boardReplySeq) {
+		return boardDao.replyList(boardReplySeq);
 	}
 
 

@@ -53,7 +53,7 @@ public interface BoardDao {
     public void updateBoardLike(int boardSeq);
     
     //댓글 기능 관련
-    public List<ReplyVo> replyList(int boardSeq); //게시글에 맞춰서 댓글 리스트 띄우기
+    public List<ReplyVo> replyList(int boardReplySeq); //게시글에 맞춰서 댓글 리스트 띄우기
     public int replyCount(); //댓글 갯수 카운트
     public void replyInsert(ReplyVo replyVo); //댓글 쓰기
     public void replyUpdate(ReplyVo replyVo); //댓글 수정

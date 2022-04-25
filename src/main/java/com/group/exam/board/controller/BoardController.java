@@ -292,7 +292,6 @@ public class BoardController {
 		
 		//댓글 list
 		List<ReplyVo> replyList = boardService.replyList(boardSeq);
-		model.addAttribute("replyList", replyList);
 		
 		boolean replyMemberCheck = false;
 		
@@ -308,6 +307,9 @@ public class BoardController {
 			}
 			model.addAttribute("replyMemberCheck", replyMemberCheck);
 		}
+		model.addAttribute("replyList", replyList);
+		System.out.println("댓글" + replyList);
+		
 		return "board/listDetail";
 	}
 
@@ -337,23 +339,12 @@ public class BoardController {
 	}
 	
 	
-	//댓글 list & insert
+	//댓글 list
 	@PostMapping(value = "/reply", produces = "application/json")
 	@ResponseBody	
 	public List<ReplyVo> boardReply(@RequestBody BoardreplyInsertCommand command, HttpSession session, Model model) {
 		LoginCommand loginMember = (LoginCommand) session.getAttribute("memberLogin");
-		
-		//댓글 입력 값이 있을 때 (클릭 시) insert
-		if (command.getReplyContent() != null) {
-			ReplyVo insertReply = new ReplyVo();
-			insertReply.setBoardReplySeq(command.getBoardReplySeq());
-			insertReply.setMemberReplySeq(loginMember.getMemberSeq());
-			insertReply.setReplyContent(command.getReplyContent());	
-			
-			boardService.replyInsert(insertReply);
-		}
-		
-		//댓글 list
+	
 		List<ReplyVo> replyList = boardService.replyList(command.getBoardReplySeq());
 		
 		boolean replyMemberCheck = false;
@@ -370,24 +361,58 @@ public class BoardController {
 			model.addAttribute("replyMemberCheck", replyMemberCheck);
 		}
 		model.addAttribute("replyList", replyList);
+		
 		return replyList;
 	}
 	
+	//댓글 insert
+		@PostMapping(value = "/replyinsert", produces = "application/json")
+		@ResponseBody	
+		public Map<String, Object> replyInsert(@RequestBody BoardreplyInsertCommand command, HttpSession session) {
+			LoginCommand loginMember = (LoginCommand) session.getAttribute("memberLogin");
+			Map<String, Object> map = new HashMap<String, Object>();	
+			
+			ReplyVo insertReply = new ReplyVo();
+			insertReply.setBoardReplySeq(command.getBoardReplySeq());
+			insertReply.setMemberReplySeq(loginMember.getMemberSeq());
+			insertReply.setReplyContent(command.getReplyContent());	
+				
+			boardService.replyInsert(insertReply);
+			map.put("result", "success");
+		
+			return map;
+		}
+	
+	//댓글 update
 	@PostMapping(value = "/replyUpdate", produces = "application/json")
 	@RequestMapping
-	public Map<String, Object> boardReplyUpdate(@RequestBody ReplyVo replyVo) {
-		Map<String, Object> result = new HashMap<>();
+	public Map<String, Object> replyUpdate(@RequestBody BoardreplyInsertCommand command) {
+		Map<String, Object> map = new HashMap<String, Object>();
 
-		try {
-			boardService.replyUpdate(replyVo);
-			result.put("status", "OK");
-		} catch (Exception e) {
-			e.printStackTrace();
-			result.put("status", "False");
-		}
-		return result;
+		ReplyVo updateReply = new ReplyVo();
+		updateReply.setReplyContent(command.getReplyContent());
+		boardService.replyUpdate(updateReply);
+		
+		map.put("result", "success");
+		return map;
 	}
 
+	//댓글 delete
+	@PostMapping(value = "/replyDelete", produces = "application/json")
+	@RequestMapping
+	public Map<String, Object> replyDelete(@RequestBody int boardSeq) {
+		Map<String, Object> map = new HashMap<String, Object>();
+
+//		ReplyVo deleteReply = new ReplyVo();
+//		deleteReply.setBoardReplySeq(boardSeq);
+		boardService.replyDelete(boardSeq);
+		
+		map.put("result", "success");
+		return map;
+	}
+	
+	
+	
 	// 게시글 수정
 	@GetMapping(value = "/edit")
 	public String boardEdit(@ModelAttribute("boardEditData") BoardVo boardVo, HttpSession session, Model model) {

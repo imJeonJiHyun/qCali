@@ -23,4 +23,9 @@ public class BoardreplyInsertCommand {
 	public void setMemberReplySeq(int memberReplySeq) {
 		this.memberReplySeq = memberReplySeq;
 	}
+	@Override
+	public String toString() {
+		return "BoardreplyInsertCommand [boardReplySeq=" + boardReplySeq + ", replyContent=" + replyContent
+				+ ", memberReplySeq=" + memberReplySeq + "]";
+	}
 }

@@ -44,4 +44,10 @@ public class ReplyVo {
 	public void setReplyRegDay(String replyRegDay) {
 		this.replyRegDay = replyRegDay;
 	}
+	@Override
+	public String toString() {
+		return "ReplyVo [replySeq=" + replySeq + ", boardReplySeq=" + boardReplySeq + ", memberReplySeq="
+				+ memberReplySeq + ", replyContent=" + replyContent + ", memberNickname=" + memberNickname
+				+ ", replyRegDay=" + replyRegDay + "]";
+	}
 }
