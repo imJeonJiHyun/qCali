@@ -194,27 +194,29 @@ public class BoardServiceImpl implements BoardService{
 
 	@Override
 	public void replyInsert(ReplyVo replyVo) {
-		ReplyVo insertReply = new ReplyVo();
-		insertReply.setBoardReplySeq(replyVo.getBoardReplySeq());
-		insertReply.setMemberReplySeq(replyVo.getMemberReplySeq());
-		insertReply.setReplyContent(replyVo.getReplyContent());
+//		ReplyVo insertReply = new ReplyVo();
+//		insertReply.setBoardReplySeq(replyVo.getBoardReplySeq());
+//		insertReply.setMemberReplySeq(replyVo.getMemberReplySeq());
+//		insertReply.setReplyContent(replyVo.getReplyContent());
 		
-		boardDao.replyInsert(insertReply);
+		boardDao.replyInsert(replyVo);
 	}
 
 
 	@Override
 	public void replyUpdate(ReplyVo replyVo) {
-		ReplyVo updateReply = new ReplyVo();
-		updateReply.setReplySeq(replyVo.getReplySeq());
-		updateReply.setReplyContent(replyVo.getReplyContent());
+//		ReplyVo updateReply = new ReplyVo();
+//		updateReply.setReplySeq(replyVo.getReplySeq());
+//		updateReply.setReplyContent(replyVo.getReplyContent());
 
-		boardDao.replyUpdate(updateReply);
+		boardDao.replyUpdate(replyVo);
 	}
 
 
 	@Override
-	public void replyDelete(int replySeq) {
-		boardDao.replyDelete(replySeq);		
+	public void replyDelete(ReplyVo replyVo) {
+//		ReplyVo deleteReply = new ReplyVo();
+//		deleteReply.setReplySeq(replyVo.getReplySeq());
+		boardDao.replyDelete(replyVo);		
 	}
 }

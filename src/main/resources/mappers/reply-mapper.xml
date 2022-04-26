@@ -4,7 +4,7 @@
 
 <mapper namespace="BoardDao">
 	<select id="replyList" parameterType="Integer" resultType="replyVo">
-		select member_nickname, reply_content, to_char(reply_reg_day, 'yyyy.mm.dd') reply_reg_day, reply_seq from reply A, member B where A.member_seq = B.member_seq and BOARD_SEQ = #{boardReplySeq}
+		select member_nickname, reply_content, to_char(reply_reg_day, 'yyyy.mm.dd') reply_reg_day, reply_seq, B.member_seq from reply A, member B where A.member_seq = B.member_seq and BOARD_SEQ = #{boardReplySeq}
 	</select>
 	
 	<select id="replyCount" parameterType="Integer" resultType="Integer">
@@ -19,7 +19,7 @@
 		update "REPLY" 
 		set reply_CONTENT = #{replyContent} where reply_seq = #{replySeq}
 	</update>
-	<delete id="replyDelete" parameterType="Integer">
+	<delete id="replyDelete" parameterType="replyVo">
 		delete from "REPLY" where reply_SEQ=#{replySeq}
 	</delete>
 </mapper>

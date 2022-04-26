@@ -199,8 +199,8 @@ public class BoardDaoImpl implements BoardDao{
 
 
 	@Override
-	public void replyDelete(int replySeq) {
-		sqlSessionTemplate.delete("replyDelete", replySeq);
+	public void replyDelete(ReplyVo replyVo) {
+		sqlSessionTemplate.delete("replyDelete", replyVo);
 		//댓글 삭제
 	}
 

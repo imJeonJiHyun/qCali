@@ -57,5 +57,5 @@ public interface BoardDao {
     public int replyCount(); //댓글 갯수 카운트
     public void replyInsert(ReplyVo replyVo); //댓글 쓰기
     public void replyUpdate(ReplyVo replyVo); //댓글 수정
-    public void replyDelete(int replySeq); //댓글 삭제
+    public void replyDelete(ReplyVo replyVo); //댓글 삭제
 }

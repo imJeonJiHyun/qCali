@@ -25,7 +25,7 @@
 		<beans:property name="suffix" value=".jsp" />
 	</beans:bean>
 	
-	<context:component-scan base-package="com.group.exam" />
+	<context:component-scan base-package="com.group.exam"/>
 	
 	<!-- spring scheduler -->
  	<task:scheduler id="jobScheduler" pool-size="10"/>
