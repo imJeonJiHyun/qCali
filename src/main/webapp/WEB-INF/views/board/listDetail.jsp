@@ -187,10 +187,12 @@
 		};		
 
 		//댓글 저장 함수
-			$('#replywriteBtn').click(function() {
+			$(document).on('click', '#replywriteBtn', function() {
 				var replyContent = $('#replyContent').val();
-				var paramData = JSON.stringify({"replyContent": replyContent,
-					"memberReplySeq": '${memberLogin.memberSeq}', "boardReplySeq":'${boardList.boardSeq}'});
+				
+				var paramData = JSON.stringify({
+					'replyContent': replyContent, 'boardReplySeq':'${boardList.boardSeq}', 'memberReplySeq':'${memberLogin.memberSeq}'});
+				
 				var headers = {"Content-Type" : "application/json", "X-HTTP-Method-Override" : "POST"};
 				
 				$.ajax({
@@ -198,15 +200,15 @@
 					headers : headers,
 					data : paramData,
 					type : 'POST',
-					dataType : 'text',
+					contentType : 'application/json',
 					success: function(result){
 						getreplylist();
-						$('#replyContent').val('');
+						console.log("댓글이 입력됐습니다.");
 					},
 					error: function(error) {
 						console.log("에러 : " + JSON.stringify(error));
 					}
-				})
+				});
 			});
 		
 		
