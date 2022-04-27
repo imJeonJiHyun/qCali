@@ -366,40 +366,37 @@ public class BoardController {
 		
 			model.addAttribute("replyMemberCheck", replyMemberCheck);
 		}
+		System.out.println("댓글 리스트 : " + replyList);
+		System.out.println();
 		return replyList;
 	}
 	
 	//댓글 insert
 		@PostMapping(value = "/replyInsert", produces = "application/json")	
 		@ResponseBody
-		public void replyInsert(@ModelAttribute BoardreplyInsertCommand command, HttpSession session) {
+		public void replyInsert(@RequestBody BoardreplyInsertCommand command, HttpSession session) {
 			LoginCommand loginMember = (LoginCommand) session.getAttribute("memberLogin");
 			
 			ReplyVo insertReply = new ReplyVo();
 			insertReply.setBoardReplySeq(command.getBoardReplySeq());
 			insertReply.setMemberReplySeq(loginMember.getMemberSeq());
 			insertReply.setReplyContent(command.getReplyContent());
-				
+			
+			System.out.println("댓글 입력 : " + insertReply);
 			boardService.replyInsert(insertReply);
-			System.out.println("입력 : "+insertReply);
 		}
 	
 	//댓글 update
-	@PostMapping(value = "/reply/{replySeq}/{replyContent}")
+	@PostMapping(value = "/replyUpdate", produces = "application/json")
 	@ResponseBody
-	public Map<String, Object> replyUpdate(@PathVariable int replySeq, @PathVariable String replyContent) {
-		Map<String, Object> map = new HashMap<String, Object>();
+	public void replyUpdate(@RequestBody BoardreplyInsertCommand command) {
 
-//		ReplyVo updateReply = new ReplyVo();
-//		updateReply.setBoardReplySeq(command.getBoardReplySeq());
-//		updateReply.setReplyContent(command.getReplyContent());
 		ReplyVo updateReply = new ReplyVo();
-		updateReply.setReplySeq(replySeq);
-		updateReply.setReplyContent(replyContent);
+		updateReply.setReplySeq(command.getReplySeq());
+		updateReply.setReplyContent(command.getReplyContent());
+
+		System.out.println("댓글 업데이트 : " + updateReply);
 		boardService.replyUpdate(updateReply);
-		
-		map.put("result", "success");
-		return map;
 	}
 
 	//댓글 delete

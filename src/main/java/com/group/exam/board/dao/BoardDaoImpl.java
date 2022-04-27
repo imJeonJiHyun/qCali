@@ -186,6 +186,7 @@ public class BoardDaoImpl implements BoardDao{
 
 	@Override
 	public void replyInsert(ReplyVo replyVo) {
+		
 		sqlSessionTemplate.insert("replyInsert", replyVo);	
 		//댓글 쓰기
 	}

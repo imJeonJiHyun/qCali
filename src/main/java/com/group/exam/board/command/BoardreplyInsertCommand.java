@@ -1,10 +1,17 @@
 package com.group.exam.board.command;
 
 public class BoardreplyInsertCommand {
+	private int replySeq;
 	private int boardReplySeq;
 	private String replyContent;
 	private int memberReplySeq;
 	
+	public int getReplySeq() {
+		return replySeq;
+	}
+	public void setReplySeq(int replySeq) {
+		this.boardReplySeq = replySeq;
+	}
 	public int getBoardReplySeq() {
 		return boardReplySeq;
 	}

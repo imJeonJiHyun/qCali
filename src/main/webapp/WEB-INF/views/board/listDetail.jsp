@@ -98,9 +98,8 @@
 	<br/>
 	<hr/>
 	
-	<div class="container"><!-- 댓글이 들어갈 div -->
-		<div id="replyList"></div>
-	</div>
+	<h6 class="border-bottom pb-2 mb-0">Reply list</h6>
+	<div id="replyList"></div>
 	
 	<script src="https://code.jquery.com/jquery-3.6.0.js"></script>
 	<script>
@@ -172,9 +171,9 @@
 							htmls += '</p>';
 							htmls += '<br/>';
 							htmls += '<c:if test="${replyMemberCheck == true}">';
-							htmls += '<button type="button" class="btn btn-outline-success" onclick="updateviewBtn(' + this.replySeq +',\'' + '\', \'' + this.replyContent + '\', \''+ this.memberNickname + '\')">';
+							htmls += '<button type="button" class="btn btn-outline-success" onclick="updateviewBtn(\'' + this.replySeq + '\', \'' + this.replyContent + '\', \''+ this.memberNickname + '\')">';
 							htmls += '댓글수정</button>';
-							htmls += '<button type="button" class="btn btn-outline-success" onclick="replydelete(' + this.replySeq +')">';
+							htmls += '<button type="button" class="btn btn-outline-success" onclick="replydelete(\'' + this.replySeq +'\')">';
 							htmls += '댓글삭제</button>';
 							htmls += '</c:if>';
 							htmls += '</div>';
@@ -186,7 +185,7 @@
 			});
 		};		
 
-		//댓글 저장 함수
+			//댓글 저장 함수
 			$(document).on('click', '#replywriteBtn', function() {
 				var replyContent = $('#replyContent').val();
 				
@@ -212,51 +211,54 @@
 			});
 		
 		
-		//댓글 수정 폼 불러오기 함수
-		function updateviewBtn(replySeq, memberNickname, replyContent){//변수명 어떻게 해야하는지 확인하기
-			console.log("들어오나");
-		
-			var htmls = "";
+			//댓글 수정 폼 불러오기 함수
+			function updateviewBtn(replySeq, replyContent, memberNickname) {
+				console.log("들어오나");
 			
-			htmls += '<div id="replySeq'+replySeq+'">';
-			htmls += '<strong>';
-			htmls += '작성자 : ' + memberNickname;
-			htmls += '</strong>&nbsp;&nbsp;&nbsp;&nbsp;';
-			htmls += '<br/><p>';
-			htmls += '수정 할 댓글 내용 : &nbsp;&nbsp;&nbsp;';
-			htmls += '<textarea class="form-control" id="replyUpdateContent">';
-			htmls += replyContent;
-			htmls += '</textarea>';
-			htmls += '</p>';
-			htmls += '<br/>';
-			htmls += '<button type="button" class="btn-outline-success"';
-			htmls += 'onclik="updateBtn(' + replySeq + ',\'' + memberNickname +'\')">댓글 작성</button>';
-			htmls += '<button type="button" class="btn-outline-success" onclick="getreplylist()" >';
-			htmls += '취소';
-			htmls += '</button>';
-			htmls += '</div>';
-			htmls += '<br/>';
-			$('#replySeq' + replySeq).replaceWith(htmls);
-			$('#replySeq' + replySeq + '#replyContent').focus();
-		};
-		
-		//댓글 수정 함수
-		function updateBtn(replySeq, memberNickname) {
-			var updateurl = "${root}reply/";
-			var replyContent = $("#replyUpdateContent").val();
+				var htmls = "";
+				
+				htmls += '<div id="replySeq'+replySeq+'">';
+				htmls += '<strong>';
+				htmls += '작성자 : '+memberNickname;
+				htmls += '</strong>&nbsp;&nbsp;&nbsp;&nbsp;';
+				htmls += '<br/><p>';
+				htmls += '수정 할 댓글 내용 : &nbsp;&nbsp;&nbsp;';
+				htmls += '<textarea class="form-control" id="replyUpdateContent">';
+				htmls += replyContent;
+				htmls += '</textarea>';
+				htmls += '</p>';
+				htmls += '<br/>';
+				htmls += '<a href="javascript:void(0)" onclick="replyUpdateBtn(\''+replySeq+'\')">댓글 작성</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+				htmls += '<a href="javascript:void(0)" onclick="getreplylist()">';
+				htmls += '취소';
+				htmls += '</div>';
+				htmls += '<br/>';
+				$('#replySeq'+replySeq).replaceWith(htmls);
+				$('#replySeq'+replySeq+'#replyContent').focus();
+			};
 			
-			$.ajax({
-				url : updateurl+replySeq+'/'+replyContent,
-				type : 'POST',
-				dataType : 'json',
-				success: function(result){
-					getreplylist();
-				},
-				error: function(error){
-					console.log("에러 : " + JSON.stringify(error));
-				}
-			});
-		};
+			
+			//댓글 수정 함수
+			function replyUpdateBtn(replySeq) {	
+				var replyContent = $('#replyUpdateContent').val();
+				var paramData = JSON.stringify({"replyContent": replyContent, "replySeq":replySeq});
+				var headers = {"Content-Type" : "application/json", "X-HTTP-Method-Override" : "POST"};
+				$.ajax({
+					url : '<c:url value="/board/replyUpdate"/>',					
+					headers : headers,
+					data : paramData,
+					dataType : 'text',
+					type : 'POST',
+					contentType : 'application/json',
+					success: function(result){
+						getreplylist();
+						console.log("댓글이 수정됐습니다.");
+					},
+					error: function(error){
+						console.log("에러 : " + JSON.stringify(error));
+					}
+				});
+			};
 		
 		//댓글 삭제 함수
 		function replydelete(replySeq) {
@@ -266,6 +268,7 @@
 				type: 'POST',
 				dataType: 'json',
 				success: function(result){
+					button_event();
 					getreplylist();
 				},
 				error: function(error){
