@@ -1,17 +1,10 @@
 package com.group.exam.board.command;
 
 public class BoardreplyInsertCommand {
-	private int replySeq;
 	private int boardReplySeq;
 	private String replyContent;
-	private int memberReplySeq;
+	private int memberSeq;
 	
-	public int getReplySeq() {
-		return replySeq;
-	}
-	public void setReplySeq(int replySeq) {
-		this.boardReplySeq = replySeq;
-	}
 	public int getBoardReplySeq() {
 		return boardReplySeq;
 	}
@@ -24,15 +17,15 @@ public class BoardreplyInsertCommand {
 	public void setReplyContent(String replyContent) {
 		this.replyContent = replyContent;
 	}
-	public int getMemberReplySeq() {
-		return memberReplySeq;
+	public int getMemberSeq() {
+		return memberSeq;
 	}
-	public void setMemberReplySeq(int memberReplySeq) {
-		this.memberReplySeq = memberReplySeq;
+	public void setMemberSeq(int memberSeq) {
+		this.memberSeq = memberSeq;
 	}
 	@Override
 	public String toString() {
 		return "BoardreplyInsertCommand [boardReplySeq=" + boardReplySeq + ", replyContent=" + replyContent
-				+ ", memberReplySeq=" + memberReplySeq + "]";
+				+ ", memberSeq=" + memberSeq + "]";
 	}
 }

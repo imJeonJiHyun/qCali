@@ -3,7 +3,7 @@ package com.group.exam.board.vo;
 public class ReplyVo {
 	private int replySeq; //댓글 번호
 	private int boardReplySeq; //게시물 번호
-	private int memberReplySeq; //댓글 작성자 번호
+	private int memberSeq; //댓글 작성자 번호
 	private String replyContent; //댓글 내용
 	private String memberNickname; //댓글 작성자
 	private String replyRegDay; //댓글 작성 날짜
@@ -20,11 +20,11 @@ public class ReplyVo {
 	public void setBoardReplySeq(int boardReplySeq) {
 		this.boardReplySeq = boardReplySeq;
 	}
-	public int getMemberReplySeq() {
-		return memberReplySeq;
+	public int getMemberSeq() {
+		return memberSeq;
 	}
-	public void setMemberReplySeq(int memberReplySeq) {
-		this.memberReplySeq = memberReplySeq;
+	public void setMemberSeq(int memberSeq) {
+		this.memberSeq = memberSeq;
 	}
 	public String getReplyContent() {
 		return replyContent;
@@ -46,8 +46,8 @@ public class ReplyVo {
 	}
 	@Override
 	public String toString() {
-		return "ReplyVo [replySeq=" + replySeq + ", boardReplySeq=" + boardReplySeq + ", memberReplySeq="
-				+ memberReplySeq + ", replyContent=" + replyContent + ", memberNickname=" + memberNickname
+		return "ReplyVo [replySeq=" + replySeq + ", boardReplySeq=" + boardReplySeq + ", memberSeq="
+				+ memberSeq + ", replyContent=" + replyContent + ", memberNickname=" + memberNickname
 				+ ", replyRegDay=" + replyRegDay + "]";
 	}
 }

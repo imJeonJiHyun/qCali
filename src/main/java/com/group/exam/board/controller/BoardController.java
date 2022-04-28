@@ -34,6 +34,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.fasterxml.classmate.MemberResolver;
 import com.group.exam.board.command.BoardLikeCommand;
 import com.group.exam.board.command.BoardlistCommand;
 import com.group.exam.board.command.BoardupdateCommand;
@@ -290,29 +291,16 @@ public class BoardController {
 		int boardlike = boardService.getBoardLike(likeVo);
 
 		model.addAttribute("boardHeart", boardlike);
-		
-		//댓글 list
-		List<ReplyVo> replyList = boardService.replyList(boardSeq);
-		
-		boolean replyMemberCheck = false;
-		
-		if (loginMember != null) {
-			// 세션에서 멤버의 mSeq 를 ReplyVo에 셋팅
-			int memberSeq = loginMember.getMemberSeq();
-			BoardreplyInsertCommand replycommand = new BoardreplyInsertCommand();
-			replycommand.setMemberReplySeq(loginMember.getMemberSeq());
-			// 세션에 저장된 mSeq와 댓글의 mSeq를 비교하여 내 글이면 수정 삭제 버튼이 뜨게
-			//어케해요잉
-			if (memberSeq == replycommand.getMemberReplySeq()) {
-				replyMemberCheck = true;
-			}
-			model.addAttribute("replyMemberCheck", replyMemberCheck);
-		}
-		model.addAttribute("replyList", replyList);
-		System.out.println("댓글" + replyList);
-		
+
+		//댓글 count&로그인한 사람의 댓글 수정삭제 버튼 활성화
+		int replyTotal = boardService.replyCount(boardSeq);
+		model.addAttribute("replyTotal", replyTotal);
+		model.addAttribute("member", loginMember);
+	
 		return "board/listDetail";
 	}
+	
+	
 
 	@PostMapping(value = "/heart", produces = "application/json")
 	@ResponseBody
@@ -344,32 +332,11 @@ public class BoardController {
 	@PostMapping(value = "/reply/{boardReplySeq}")	
 	@ResponseBody
 	public List<ReplyVo> boardReply(@PathVariable int boardReplySeq, HttpSession session, Model model) {
-		LoginCommand loginMember = (LoginCommand) session.getAttribute("memberLogin");
-	
 		List<ReplyVo> replyList = boardService.replyList(boardReplySeq);
-		for (int i = 0; i <replyList.size(); i++ ) {
-			replyList.get(i);
-			
-			boolean replyMemberCheck = false;
-			
-			if (loginMember != null) {
-				// 세션에서 멤버의 mSeq 를 ReplyVo에 셋팅
-				int memberSeq = loginMember.getMemberSeq();
-				BoardreplyInsertCommand replycommand = new BoardreplyInsertCommand();
-				// 세션에 저장된 mSeq와 댓글의 mSeq를 비교하여 내 글이면 수정 삭제 버튼이 뜨게
-				
-				if (memberSeq == replycommand.getMemberReplySeq()) {
-					replyMemberCheck = true;
-				}
-		
-		}
-		
-			model.addAttribute("replyMemberCheck", replyMemberCheck);
-		}
-		System.out.println("댓글 리스트 : " + replyList);
-		System.out.println();
+
 		return replyList;
 	}
+	
 	
 	//댓글 insert
 		@PostMapping(value = "/replyInsert", produces = "application/json")	
@@ -379,42 +346,46 @@ public class BoardController {
 			
 			ReplyVo insertReply = new ReplyVo();
 			insertReply.setBoardReplySeq(command.getBoardReplySeq());
-			insertReply.setMemberReplySeq(loginMember.getMemberSeq());
+			insertReply.setMemberSeq(loginMember.getMemberSeq());
 			insertReply.setReplyContent(command.getReplyContent());
 			
-			System.out.println("댓글 입력 : " + insertReply);
 			boardService.replyInsert(insertReply);
 		}
 	
+		
 	//댓글 update
-	@PostMapping(value = "/replyUpdate", produces = "application/json")
+	@PostMapping(value = "/replyUpdate/{replySeq}", produces = "application/json")
 	@ResponseBody
-	public void replyUpdate(@RequestBody BoardreplyInsertCommand command) {
-
+	public Map<String, Object> replyUpdate(@RequestBody BoardreplyInsertCommand command, @PathVariable int replySeq) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		
 		ReplyVo updateReply = new ReplyVo();
-		updateReply.setReplySeq(command.getReplySeq());
+		updateReply.setReplySeq(replySeq);
 		updateReply.setReplyContent(command.getReplyContent());
 
-		System.out.println("댓글 업데이트 : " + updateReply);
 		boardService.replyUpdate(updateReply);
+		map.put("result", "success");
+		
+		return map;	
 	}
 
+	
 	//댓글 delete
-	@PostMapping(value = "/replydelete/{replySeq}")
+	@PostMapping(value = "/replydelete/{replySeq}", produces = "application/json")
 	@ResponseBody
 	public Map<String, Object> replyDelete(@PathVariable int replySeq) {
 		Map<String, Object> map = new HashMap<String, Object>();
 
 		ReplyVo deleteReply = new ReplyVo();
 		deleteReply.setReplySeq(replySeq);
+	
 		boardService.replyDelete(deleteReply);
-		
 		map.put("result", "success");
+		
 		return map;
 	}
 	
-	
-	
+
 	// 게시글 수정
 	@GetMapping(value = "/edit")
 	public String boardEdit(@ModelAttribute("boardEditData") BoardVo boardVo, HttpSession session, Model model) {

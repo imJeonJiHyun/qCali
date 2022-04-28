@@ -178,8 +178,8 @@ public class BoardDaoImpl implements BoardDao{
 
 
 	@Override
-	public int replyCount() {
-		return sqlSessionTemplate.selectOne("replyCount");
+	public int replyCount(int boardSeq) {
+		return sqlSessionTemplate.selectOne("replyCount", boardSeq);
 		//댓글 갯수 카운트
 	}
 

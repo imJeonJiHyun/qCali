@@ -8,12 +8,12 @@
 	</select>
 	
 	<select id="replyCount" parameterType="Integer" resultType="Integer">
-		select count(*) from "REPLY" where board_seq = #{boardReplySeq}
+		select count(*) from "REPLY" where board_seq = #{boardSeq}
 	</select>
 	
 	<insert id="replyInsert" parameterType="replyVo">
 		insert into "REPLY" (reply_SEQ, BOARD_SEQ, MEMBER_SEQ, reply_CONTENT, reply_REG_DAY) 
-		values (reply_SEQ.nextval, #{boardReplySeq}, #{memberReplySeq}, #{replyContent}, sysdate)
+		values (reply_SEQ.nextval, #{boardReplySeq}, #{memberSeq}, #{replyContent}, sysdate)
 	</insert>
 	<update id="replyUpdate" parameterType="replyVo">
 		update "REPLY" 

@@ -92,6 +92,14 @@ public class LoginCommand {
 		this.memberLevel = memberLevel;
 	}
 
+	@Override
+	public String toString() {
+		return "LoginCommand [memberSeq=" + memberSeq + ", memberId=" + memberId + ", memberPassword=" + memberPassword
+				+ ", memberBpw=" + memberBpw + ", memberNickname=" + memberNickname + ", memberBirthDay="
+				+ memberBirthDay + ", memberRegDay=" + memberRegDay + ", memberAuth=" + memberAuth + ", memberLevel="
+				+ memberLevel + "]";
+	}
+
 
 	
 

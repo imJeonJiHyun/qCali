@@ -56,6 +56,7 @@ public interface BoardService {
 
 	//댓글 기능 관련
 	public List<ReplyVo> replyList(int boardReplySeq); //게시글에 맞춰서 댓글 리스트 띄우기
+	public int replyCount(int boardSeq); //댓글 카운트
 	public void replyInsert(ReplyVo replyVo); //댓글 쓰기
 	public void replyUpdate(ReplyVo replyVo); //댓글 수정
 	public void replyDelete(ReplyVo replyVo); //댓글 삭제
